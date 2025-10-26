@@ -110,7 +110,7 @@ fun HomeScreen() {
 
     //Daily Progress
     val totalMeds = 3
-    val completedMeds = listOf(isMedication1Taken, isMedication2Taken).count { it }
+    val completedMeds = listOf(isMedication1Taken, isMedication2Taken, isMedication3Taken).count { it }
     val progress = remember(completedMeds) {
         if (totalMeds == 0) 0f else completedMeds.toFloat() / totalMeds.toFloat()
     }
