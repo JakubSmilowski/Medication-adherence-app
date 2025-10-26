@@ -30,13 +30,24 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         setContent {
             MedicationAdherenceAppTheme {
-                Surface(
-                    modifier = Modifier.fillMaxSize(),
-                    color = MaterialTheme.colorScheme.background
-                ) {
-                    HomeScreen()
-                }
+                MedicationAdherenceApp()
             }
+        }
+    }
+}
+
+@Composable
+fun MedicationAdherenceApp() {
+    var isLoggedIn by remember { mutableStateOf(false) }
+
+    Surface(
+        modifier = Modifier.fillMaxSize(),
+        color = MaterialTheme.colorScheme.background
+    ) {
+        if (isLoggedIn) {
+            HomeScreen()
+        } else {
+            LoginScreen(onLoginClick = { isLoggedIn = true })
         }
     }
 }
