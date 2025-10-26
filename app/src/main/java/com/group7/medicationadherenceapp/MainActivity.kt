@@ -1,36 +1,31 @@
 package com.group7.medicationadherenceapp
 
+import android.app.DatePickerDialog
+import android.app.TimePickerDialog
 import android.os.Build
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.annotation.RequiresApi
-//CONSOLIDATED UI & LAYOUT
-import androidx.compose.foundation.layout.* // Covers Row, Column, Spacer, padding, fillMaxSize, fillMaxWidth, width, size, Arrangement
+import androidx.compose.foundation.layout.*
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.* // Covers Home, Restore, Person, Settings, DateRange
-import androidx.compose.material3.* // Covers Scaffold, TopAppBar, BottomAppBar, Button, OutlinedButton, Text, MaterialTheme, Icon, IconButton, Checkbox, LinearProgressIndicator, etc.
-import androidx.compose.runtime.* // Covers Composable, remember, mutableStateOf, getValue, setValue
+import androidx.compose.material.icons.filled.*
+import androidx.compose.material3.*
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-//import androidx.compose.ui.unit.sp
-import androidx.compose.ui.graphics.vector.ImageVector // Specific UI/Graphics type
-
-
-//Needed for data picking
-import androidx.compose.ui.platform.LocalContext
-import android.app.DatePickerDialog
-import android.app.TimePickerDialog
-import java.util.Calendar
-import java.util.Locale
-
-// KOTLIN AND JAVA
+import androidx.navigation.NavController
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
+import androidx.navigation.compose.rememberNavController
+import com.group7.medicationadherenceapp.ui.theme.MedicationAdherenceAppTheme
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
-
-import com.group7.medicationadherenceapp.ui.theme.MedicationAdherenceAppTheme
+import java.util.*
 
 class MainActivity : ComponentActivity() {
     @RequiresApi(Build.VERSION_CODES.O)
@@ -38,24 +33,29 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         setContent {
             MedicationAdherenceAppTheme {
-                MedicationAdherenceApp()
+                Surface(modifier = Modifier.fillMaxSize()) {
+                    val navController = rememberNavController()
+                    NavHost(navController = navController, startDestination = "login") {
+                        composable("login") {
+                            LoginScreen(onLoginClick = {
+                                navController.navigate("home") {
+                                    popUpTo("login") { inclusive = true }
+                                }
+                            })
+                        }
+                        composable("home") {
+                            HomeScreen(navController)
+                        }
+                        composable("medicationDetails/{medName}") { backStackEntry ->
+                            val medName = backStackEntry.arguments?.getString("medName") ?: ""
+                            MedicationDetailScreen(
+                                medicationName = medName,
+                                onBackClick = { navController.popBackStack() }
+                            )
+                        }
+                    }
+                }
             }
-        }
-    }
-}
-
-@Composable
-fun MedicationAdherenceApp() {
-    var isLoggedIn by remember { mutableStateOf(false) }
-
-    Surface(
-        modifier = Modifier.fillMaxSize(),
-        color = MaterialTheme.colorScheme.background
-    ) {
-        if (isLoggedIn) {
-            HomeScreen()
-        } else {
-            LoginScreen(onLoginClick = { isLoggedIn = true })
         }
     }
 }
@@ -101,16 +101,14 @@ fun MedicationRow(
         )
     }
 }
+
 @Composable
 fun BottomBarItem(
     icon: ImageVector,
     contentDescription: String,
     onClick: () -> Unit
 ) {
-
-    IconButton(
-        onClick = onClick
-    ) {
+    IconButton(onClick = onClick) {
         Icon(
             imageVector = icon,
             contentDescription = contentDescription
@@ -121,43 +119,40 @@ fun BottomBarItem(
 @RequiresApi(Build.VERSION_CODES.O)
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun HomeScreen() {
+fun HomeScreen(navController: NavController) {
+    var isMedication1Taken by remember { mutableStateOf(false) }
+    var isMedication2Taken by remember { mutableStateOf(false) }
+    var isMedication3Taken by remember { mutableStateOf(false) }
 
-    // State variables for dialogs
+    val totalMeds = 3
+    val completedMeds = listOf(isMedication1Taken, isMedication2Taken, isMedication3Taken).count { it }
+    val progress = if (totalMeds > 0) completedMeds.toFloat() / totalMeds.toFloat() else 0f
+    val progressPercent = (progress * 100).toInt()
+
     val context = LocalContext.current
     var selectedMedicationName by remember { mutableStateOf("") }
-
-    // State for the selected date and time (for demo purposes)
     var selectedDate by remember { mutableStateOf("N/A") }
     var selectedTime by remember { mutableStateOf("N/A") }
 
     val timeCalendar = Calendar.getInstance()
-    // 2. Define the Time Picker Dialog (must come first)
     val timePickerDialog = TimePickerDialog(
         context,
         { _, hourOfDay, minute ->
             selectedTime = String.format(Locale.getDefault(), "%02d:%02d", hourOfDay, minute)
-            // Log the final date/time
             println("Medication: $selectedMedicationName, Date: $selectedDate, Time: $selectedTime")
         },
         timeCalendar.get(Calendar.HOUR_OF_DAY),
         timeCalendar.get(Calendar.MINUTE),
-        false // Set to true for 24-hour clock
+        false
     )
 
-    // Helper function to show the Time Picker (now correctly defined)
-    val showTimePicker: () -> Unit = {
-        timePickerDialog.show()
-    }
+    val showTimePicker: () -> Unit = { timePickerDialog.show() }
 
     val dateCalendar = Calendar.getInstance()
-    // 1. Define the Date Picker Dialog, referencing the now-defined showTimePicker
     val datePickerDialog = DatePickerDialog(
         context,
         { _, year, month, dayOfMonth ->
-            // Date selected successfully:
             selectedDate = "$dayOfMonth/${month + 1}/$year"
-            // FIX APPLIED: showTimePicker() is now in scope and callable.
             showTimePicker()
         },
         dateCalendar.get(Calendar.YEAR),
@@ -165,25 +160,13 @@ fun HomeScreen() {
         dateCalendar.get(Calendar.DAY_OF_MONTH)
     )
 
-    // Helper function to show the Date Picker
     val showDatePicker: (String) -> Unit = { medName ->
         selectedMedicationName = medName
         datePickerDialog.show()
     }
-    //Checkbox needed
-    var isMedication1Taken by remember { mutableStateOf(false) }
-    var isMedication2Taken by remember { mutableStateOf(false) }
-    var isMedication3Taken by remember { mutableStateOf(false) }
-
-    //Daily Progress
-    val totalMeds = 3
-    val completedMeds = listOf(isMedication1Taken, isMedication2Taken, isMedication3Taken).count { it }
-    val progress = remember(completedMeds) {
-        if (totalMeds == 0) 0f else completedMeds.toFloat() / totalMeds.toFloat()
-    }
-    val progressPercent = (progress * 100).toInt()
 
     val currentDate = LocalDate.now().format(DateTimeFormatter.ofPattern("EEEE, MMMM d"))
+
     Scaffold(
         topBar = {
             TopAppBar(
@@ -204,34 +187,14 @@ fun HomeScreen() {
                 containerColor = MaterialTheme.colorScheme.primary,
                 contentColor = MaterialTheme.colorScheme.onPrimary,
             ) {
-                Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceAround) {
-                    // Home Button
-                    BottomBarItem(
-                        icon = Icons.Filled.Home,
-                        contentDescription = "Home",
-                        onClick = { println("Home button clicked: Stay on Home Screen") }
-                    )
-
-                    // History Button
-                    BottomBarItem(
-                        icon = Icons.Filled.DateRange,
-                        contentDescription = "History",
-                        onClick = { /* Navigate to History */ }
-                    )
-
-                    // Profile Button
-                    BottomBarItem(
-                        icon = Icons.Filled.Person,
-                        contentDescription = "Profile",
-                        onClick = { /* Navigate to Profile */ }
-                    )
-
-                    // Settings Button
-                    BottomBarItem(
-                        icon = Icons.Filled.Settings,
-                        contentDescription = "Settings",
-                        onClick = { /* Navigate to Settings */ }
-                    )
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceAround
+                ) {
+                    BottomBarItem(icon = Icons.Filled.Home, contentDescription = "Home", onClick = { /* Already home */ })
+                    BottomBarItem(icon = Icons.Filled.DateRange, contentDescription = "History", onClick = { /* Navigate to History */ })
+                    BottomBarItem(icon = Icons.Filled.Person, contentDescription = "Profile", onClick = { /* Navigate to Profile */ })
+                    BottomBarItem(icon = Icons.Filled.Settings, contentDescription = "Settings", onClick = { /* Navigate to Settings */ })
                 }
             }
         }
@@ -241,26 +204,26 @@ fun HomeScreen() {
                 .fillMaxSize()
                 .padding(innerPadding)
                 .padding(24.dp),
-            //verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             MedicationRow(
                 medicationName = "Medication 1",
-                onMedicationClick = { /* TODO: Navigate to M1 Details */ },
+                onMedicationClick = { navController.navigate("medicationDetails/Medication 1") },
                 onDateClick = { showDatePicker("Medication 1") },
                 isChecked = isMedication1Taken,
                 onCheckedChange = { isMedication1Taken = it }
             )
             MedicationRow(
                 medicationName = "Medication 2",
-                onMedicationClick = { /* TODO: Navigate to M2 Details */ },
+                onMedicationClick = { navController.navigate("medicationDetails/Medication 2") },
                 onDateClick = { showDatePicker("Medication 2") },
                 isChecked = isMedication2Taken,
                 onCheckedChange = { isMedication2Taken = it }
             )
             MedicationRow(
                 medicationName = "Medication 3",
-                onMedicationClick = { /* TODO: Navigate to M3 Details */ },
+                onMedicationClick = { navController.navigate(
+                "medicationDetails/Medication 3") },
                 onDateClick = { showDatePicker("Medication 3") },
                 isChecked = isMedication3Taken,
                 onCheckedChange = { isMedication3Taken = it }
@@ -297,7 +260,7 @@ fun HomeScreen() {
                 )
 
                 LinearProgressIndicator(
-                    progress = progress, // Uses the calculated progress float
+                    progress = progress,
                     modifier = Modifier.fillMaxWidth()
                 )
             }
@@ -317,7 +280,7 @@ fun HomeScreen() {
                 onClick = { /* TODO: Contact Doctor */ },
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(horizontal = 32.dp)// vertical = 8.dp)
+                    .padding(horizontal = 32.dp)
             ) {
                 Text("Contact Doctor")
             }
@@ -326,11 +289,13 @@ fun HomeScreen() {
 }
 
 
+
 @RequiresApi(Build.VERSION_CODES.O)
 @Preview(showBackground = true)
 @Composable
 fun HomeScreenPreview() {
+    val navController = rememberNavController()
     MedicationAdherenceAppTheme {
-        HomeScreen()
+        HomeScreen(navController)
     }
 }
