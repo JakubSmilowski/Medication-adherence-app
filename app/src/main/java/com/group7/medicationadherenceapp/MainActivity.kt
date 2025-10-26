@@ -22,6 +22,7 @@ import androidx.navigation.NavController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import com.group7.medicationadherenceapp.caregiver.CaregiverHomeScreen
 import com.group7.medicationadherenceapp.ui.theme.MedicationAdherenceAppTheme
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
@@ -36,16 +37,24 @@ class MainActivity : ComponentActivity() {
                 Surface(modifier = Modifier.fillMaxSize()) {
                     val navController = rememberNavController()
                     NavHost(navController = navController, startDestination = "login") {
+                        //login route
                         composable("login") {
                             LoginScreen(onLoginClick = {
+                                //redirects home after the login
                                 navController.navigate("home") {
                                     popUpTo("login") { inclusive = true }
                                 }
                             })
                         }
+                        //home route
                         composable("home") {
                             HomeScreen(navController)
                         }
+                        //caregiver home screen route
+                        composable("caregiver") {
+                            CaregiverHomeScreen()
+                        }
+                        //medication details route
                         composable("medicationDetails/{medName}") { backStackEntry ->
                             val medName = backStackEntry.arguments?.getString("medName") ?: ""
                             MedicationDetailScreen(
@@ -59,7 +68,7 @@ class MainActivity : ComponentActivity() {
         }
     }
 }
-
+//UI block below
 @Composable
 fun MedicationRow(
     medicationName: String,
