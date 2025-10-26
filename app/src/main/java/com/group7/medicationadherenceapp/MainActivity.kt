@@ -18,6 +18,14 @@ import androidx.compose.ui.unit.dp
 //import androidx.compose.ui.unit.sp
 import androidx.compose.ui.graphics.vector.ImageVector // Specific UI/Graphics type
 
+
+//Needed for data picking
+import androidx.compose.ui.platform.LocalContext
+import android.app.DatePickerDialog
+import android.app.TimePickerDialog
+import java.util.Calendar
+import java.util.Locale
+
 // KOTLIN AND JAVA
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
@@ -103,6 +111,54 @@ fun BottomBarItem(
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun HomeScreen() {
+
+    // State variables for dialogs
+    val context = LocalContext.current
+    var selectedMedicationName by remember { mutableStateOf("") }
+
+    // State for the selected date and time (for demo purposes)
+    var selectedDate by remember { mutableStateOf("N/A") }
+    var selectedTime by remember { mutableStateOf("N/A") }
+
+    val timeCalendar = Calendar.getInstance()
+    // 2. Define the Time Picker Dialog (must come first)
+    val timePickerDialog = TimePickerDialog(
+        context,
+        { _, hourOfDay, minute ->
+            selectedTime = String.format(Locale.getDefault(), "%02d:%02d", hourOfDay, minute)
+            // Log the final date/time
+            println("Medication: $selectedMedicationName, Date: $selectedDate, Time: $selectedTime")
+        },
+        timeCalendar.get(Calendar.HOUR_OF_DAY),
+        timeCalendar.get(Calendar.MINUTE),
+        false // Set to true for 24-hour clock
+    )
+
+    // Helper function to show the Time Picker (now correctly defined)
+    val showTimePicker: () -> Unit = {
+        timePickerDialog.show()
+    }
+
+    val dateCalendar = Calendar.getInstance()
+    // 1. Define the Date Picker Dialog, referencing the now-defined showTimePicker
+    val datePickerDialog = DatePickerDialog(
+        context,
+        { _, year, month, dayOfMonth ->
+            // Date selected successfully:
+            selectedDate = "$dayOfMonth/${month + 1}/$year"
+            // FIX APPLIED: showTimePicker() is now in scope and callable.
+            showTimePicker()
+        },
+        dateCalendar.get(Calendar.YEAR),
+        dateCalendar.get(Calendar.MONTH),
+        dateCalendar.get(Calendar.DAY_OF_MONTH)
+    )
+
+    // Helper function to show the Date Picker
+    val showDatePicker: (String) -> Unit = { medName ->
+        selectedMedicationName = medName
+        datePickerDialog.show()
+    }
     //Checkbox needed
     var isMedication1Taken by remember { mutableStateOf(false) }
     var isMedication2Taken by remember { mutableStateOf(false) }
@@ -142,7 +198,7 @@ fun HomeScreen() {
                     BottomBarItem(
                         icon = Icons.Filled.Home,
                         contentDescription = "Home",
-                        onClick = { /* Navigate Home */ }
+                        onClick = { println("Home button clicked: Stay on Home Screen") }
                     )
 
                     // History Button
@@ -180,23 +236,29 @@ fun HomeScreen() {
             MedicationRow(
                 medicationName = "Medication 1",
                 onMedicationClick = { /* TODO: Navigate to M1 Details */ },
-                onDateClick = { /* TODO: Open Date Picker Dialog */ },
+                onDateClick = { showDatePicker("Medication 1") },
                 isChecked = isMedication1Taken,
                 onCheckedChange = { isMedication1Taken = it }
             )
             MedicationRow(
                 medicationName = "Medication 2",
                 onMedicationClick = { /* TODO: Navigate to M2 Details */ },
-                onDateClick = { /* TODO: Open Date Picker Dialog */ },
+                onDateClick = { showDatePicker("Medication 2") },
                 isChecked = isMedication2Taken,
                 onCheckedChange = { isMedication2Taken = it }
             )
             MedicationRow(
                 medicationName = "Medication 3",
                 onMedicationClick = { /* TODO: Navigate to M3 Details */ },
-                onDateClick = { /* TODO: Open Date Picker Dialog */ },
+                onDateClick = { showDatePicker("Medication 3") },
                 isChecked = isMedication3Taken,
                 onCheckedChange = { isMedication3Taken = it }
+            )
+
+            Text(
+                text = "Last Selection: $selectedMedicationName on $selectedDate at $selectedTime",
+                style = MaterialTheme.typography.bodyMedium,
+                modifier = Modifier.padding(top = 16.dp)
             )
 
             Spacer(modifier = Modifier.height(16.dp))
