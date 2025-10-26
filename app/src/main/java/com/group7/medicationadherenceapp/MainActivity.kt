@@ -17,7 +17,10 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.graphics.vector.ImageVector // Specific UI/Graphics type
-
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
+import androidx.navigation.compose.rememberNavController
+import androidx.navigation.NavController
 // KOTLIN AND JAVA
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
@@ -25,20 +28,31 @@ import java.time.format.DateTimeFormatter
 import com.group7.medicationadherenceapp.ui.theme.MedicationAdherenceAppTheme
 
 class MainActivity : ComponentActivity() {
-    @RequiresApi(Build.VERSION_CODES.O)
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        setContent {
-            MedicationAdherenceAppTheme {
-                Surface(
-                    modifier = Modifier.fillMaxSize(),
-                    color = MaterialTheme.colorScheme.background
-                ) {
-                    HomeScreen()
+        @RequiresApi(Build.VERSION_CODES.O)
+        override fun onCreate(savedInstanceState: Bundle?) {
+            super.onCreate(savedInstanceState)
+            setContent {
+                MedicationAdherenceAppTheme {
+                    Surface(modifier = Modifier.fillMaxSize()) {
+                        val navController = rememberNavController()
+                        NavHost(navController = navController, startDestination = "home") {
+
+                            composable("home") {
+                                HomeScreen(navController)
+                            }
+
+                            composable("medicationDetails/{medName}") { backStackEntry ->
+                                val medName = backStackEntry.arguments?.getString("medName") ?: ""
+                                MedicationDetailScreen(
+                                    medicationName = medName,
+                                    onBackClick = { navController.popBackStack() }
+                                )
+                            }
+                        }
+                    }
                 }
             }
         }
-    }
 }
 
 @Composable
@@ -102,7 +116,7 @@ fun BottomBarItem(
 @RequiresApi(Build.VERSION_CODES.O)
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun HomeScreen() {
+fun HomeScreen(navController: NavController) {
     //Checkbox needed
     var isMedication1Taken by remember { mutableStateOf(false) }
     var isMedication2Taken by remember { mutableStateOf(false) }
@@ -179,21 +193,27 @@ fun HomeScreen() {
         ) {
             MedicationRow(
                 medicationName = "Medication 1",
-                onMedicationClick = { /* TODO: Navigate to M1 Details */ },
+                onMedicationClick = {
+                    navController.navigate("MedicationDetails/${"Medication 1"}")
+                },
                 onDateClick = { /* TODO: Open Date Picker Dialog */ },
                 isChecked = isMedication1Taken,
                 onCheckedChange = { isMedication1Taken = it }
             )
             MedicationRow(
                 medicationName = "Medication 2",
-                onMedicationClick = { /* TODO: Navigate to M2 Details */ },
+                onMedicationClick = {
+                    navController.navigate("MedicationDetails/${"Medication 2"}")
+                },
                 onDateClick = { /* TODO: Open Date Picker Dialog */ },
                 isChecked = isMedication2Taken,
                 onCheckedChange = { isMedication2Taken = it }
             )
             MedicationRow(
                 medicationName = "Medication 3",
-                onMedicationClick = { /* TODO: Navigate to M3 Details */ },
+                onMedicationClick = {
+                    navController.navigate("MedicationDetails/${"Medication 3"}")
+                },
                 onDateClick = { /* TODO: Open Date Picker Dialog */ },
                 isChecked = isMedication3Taken,
                 onCheckedChange = { isMedication3Taken = it }
@@ -257,7 +277,8 @@ fun HomeScreen() {
 @Preview(showBackground = true)
 @Composable
 fun HomeScreenPreview() {
+    val navController = rememberNavController()
     MedicationAdherenceAppTheme {
-        HomeScreen()
+        HomeScreen(navController)
     }
 }
