@@ -20,12 +20,15 @@ import androidx.compose.ui.graphics.vector.ImageVector // Specific UI/Graphics t
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.NavController
 // KOTLIN AND JAVA
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 
 import com.group7.medicationadherenceapp.ui.theme.MedicationAdherenceAppTheme
+
+
 
 class MainActivity : ComponentActivity() {
         @RequiresApi(Build.VERSION_CODES.O)
@@ -34,21 +37,7 @@ class MainActivity : ComponentActivity() {
             setContent {
                 MedicationAdherenceAppTheme {
                     Surface(modifier = Modifier.fillMaxSize()) {
-                        val navController = rememberNavController()
-                        NavHost(navController = navController, startDestination = "home") {
-
-                            composable("home") {
-                                HomeScreen(navController)
-                            }
-
-                            composable("medicationDetails/{medName}") { backStackEntry ->
-                                val medName = backStackEntry.arguments?.getString("medName") ?: ""
-                                MedicationDetailScreen(
-                                    medicationName = medName,
-                                    onBackClick = { navController.popBackStack() }
-                                )
-                            }
-                        }
+                        MedicationApp()
                     }
                 }
             }
@@ -114,9 +103,8 @@ fun BottomBarItem(
 }
 
 @RequiresApi(Build.VERSION_CODES.O)
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun HomeScreen(navController: NavController) {
+fun HomeScreenContent(navController: NavController) {
     //Checkbox needed
     var isMedication1Taken by remember { mutableStateOf(false) }
     var isMedication2Taken by remember { mutableStateOf(false) }
@@ -131,66 +119,13 @@ fun HomeScreen(navController: NavController) {
     val progressPercent = (progress * 100).toInt()
 
     val currentDate = LocalDate.now().format(DateTimeFormatter.ofPattern("EEEE, MMMM d"))
-    Scaffold(
-        topBar = {
-            TopAppBar(
-                title = {
-                    Column(horizontalAlignment = Alignment.Start) {
-                        Text("Welcome, Patient")
-                        Text(currentDate, style = MaterialTheme.typography.bodySmall)
-                    }
-                },
-                colors = TopAppBarDefaults.topAppBarColors(
-                    containerColor = MaterialTheme.colorScheme.primary,
-                    titleContentColor = MaterialTheme.colorScheme.onPrimary,
-                )
-            )
-        },
-        bottomBar = {
-            BottomAppBar(
-                containerColor = MaterialTheme.colorScheme.primary,
-                contentColor = MaterialTheme.colorScheme.onPrimary,
-            ) {
-                Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceAround) {
-                    // Home Button
-                    BottomBarItem(
-                        icon = Icons.Filled.Home,
-                        contentDescription = "Home",
-                        onClick = { /* Navigate Home */ }
-                    )
 
-                    // History Button
-                    BottomBarItem(
-                        icon = Icons.Filled.DateRange,
-                        contentDescription = "History",
-                        onClick = { /* Navigate to History */ }
-                    )
-
-                    // Profile Button
-                    BottomBarItem(
-                        icon = Icons.Filled.Person,
-                        contentDescription = "Profile",
-                        onClick = { /* Navigate to Profile */ }
-                    )
-
-                    // Settings Button
-                    BottomBarItem(
-                        icon = Icons.Filled.Settings,
-                        contentDescription = "Settings",
-                        onClick = { /* Navigate to Settings */ }
-                    )
-                }
-            }
-        }
-    ) { innerPadding ->
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(innerPadding)
-                .padding(24.dp),
-            //verticalArrangement = Arrangement.Center,
-            horizontalAlignment = Alignment.CenterHorizontally
-        ) {
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(24.dp),
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
             MedicationRow(
                 medicationName = "Medication 1",
                 onMedicationClick = {
@@ -270,15 +205,104 @@ fun HomeScreen(navController: NavController) {
             }
         }
     }
+
+@RequiresApi(Build.VERSION_CODES.O)
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun MedicationApp() {
+    val navController = rememberNavController()
+
+    // TopAppBar logic
+    val topBar: @Composable () -> Unit = {
+        // Determine the current route
+        val navBackStackEntry by navController.currentBackStackEntryAsState()
+        val currentRoute = navBackStackEntry?.destination?.route
+
+        TopAppBar(
+            title = {
+                when {
+                    currentRoute == "home" -> {
+                        // Replicate the HomeScreen's title
+                        Column(horizontalAlignment = Alignment.Start) {
+                            Text("Welcome, Patient")
+                            Text(
+                                LocalDate.now().format(DateTimeFormatter.ofPattern("EEEE, MMMM d")),
+                                style = MaterialTheme.typography.bodySmall
+                            )
+                        }
+                    }
+                    currentRoute?.startsWith("medicationDetails") == true -> {
+                        // Extract name from route argument if possible, otherwise placeholder
+                        val medName = navBackStackEntry?.arguments?.getString("medName") ?: "Medication Info"
+                        Text(medName)
+                    }
+                    else -> Text("")
+                }
+            },
+            navigationIcon = {
+                // Show back button only on detail screen
+                if (currentRoute?.startsWith("medicationDetails") == true) {
+                    IconButton(onClick = { navController.popBackStack() }) {
+                        Icon(Icons.Filled.ArrowBack, contentDescription = "Back")
+                    }
+                }
+            },
+            colors = TopAppBarDefaults.topAppBarColors(
+                containerColor = MaterialTheme.colorScheme.primary,
+                titleContentColor = MaterialTheme.colorScheme.onPrimary,
+                navigationIconContentColor = MaterialTheme.colorScheme.onPrimary
+            )
+        )
+    }
+
+    // BottomAppBar component
+    val bottomBar: @Composable () -> Unit = {
+        BottomAppBar(
+            containerColor = MaterialTheme.colorScheme.primary,
+            contentColor = MaterialTheme.colorScheme.onPrimary,
+        ) {
+            Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceAround) {
+                // Home Button (Use Icons.Filled.Home or similar for consistency)
+                BottomBarItem(icon = Icons.Filled.Home, contentDescription = "Home", onClick = { navController.navigate("home") })
+                // History Button (Using Icons.Filled.Restore as shown in the original image's bottom nav)
+                BottomBarItem(icon = Icons.Filled.DateRange, contentDescription = "History", onClick = { /* Navigate to History */})
+                // Profile Button
+                BottomBarItem(icon = Icons.Filled.Person, contentDescription = "Profile", onClick = { /* Navigate to Profile */ })
+                // Settings Button
+                BottomBarItem(icon = Icons.Filled.Settings, contentDescription = "Settings", onClick = { /* Navigate to Settings */ })
+            }
+        }
+    }
+
+    // Scaffold wrapper
+    Scaffold(
+        topBar = topBar,
+        bottomBar = bottomBar
+    ) { innerPadding ->
+        NavHost(
+            navController = navController,
+            startDestination = "home",
+            Modifier.padding(innerPadding) // Apply padding to the NavHost
+        ) {
+            composable("home") {
+                // HomeScreen is now only the content
+                HomeScreenContent(navController)
+            }
+
+            composable("medicationDetails/{medName}") { backStackEntry ->
+                val medName = backStackEntry.arguments?.getString("medName") ?: ""
+                // Detail screen is now only the content
+                MedicationDetailContent(medicationName = medName)
+            }
+        }
+    }
 }
-
-
 @RequiresApi(Build.VERSION_CODES.O)
 @Preview(showBackground = true)
 @Composable
 fun HomeScreenPreview() {
     val navController = rememberNavController()
     MedicationAdherenceAppTheme {
-        HomeScreen(navController)
+        HomeScreenContent(navController)
     }
 }
