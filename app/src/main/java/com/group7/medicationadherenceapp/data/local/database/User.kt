@@ -1,7 +1,5 @@
-package com.group7.medicationadherenceapp
+package com.group7.medicationadherenceapp.data.local.database
 
-import android.provider.ContactsContract
-import androidx.compose.ui.semantics.Role
 import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey

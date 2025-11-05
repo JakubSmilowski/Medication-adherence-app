@@ -2,6 +2,7 @@ package com.group7.medicationadherenceapp
 
 import android.content.Context
 import androidx.room.Room
+import com.group7.medicationadherenceapp.data.local.database.AppDatabase
 
 object DatabaseProvider {
     @Volatile

@@ -1,9 +1,10 @@
-package com.group7.medicationadherenceapp
+package com.group7.medicationadherenceapp.data.local.database
 
 import androidx.room.Dao
 import androidx.room.Delete
 import androidx.room.Insert
 import androidx.room.Query
+import com.group7.medicationadherenceapp.data.local.database.User
 
 @Dao
 interface UserDao {
