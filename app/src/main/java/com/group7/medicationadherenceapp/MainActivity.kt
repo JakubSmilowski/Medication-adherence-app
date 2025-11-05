@@ -23,10 +23,12 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.group7.medicationadherenceapp.caregiver.CaregiverHomeScreen
+import com.group7.medicationadherenceapp.navigation.caregiverGraph
 import com.group7.medicationadherenceapp.ui.theme.MedicationAdherenceAppTheme
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 import java.util.*
+
 
 class MainActivity : ComponentActivity() {
     @RequiresApi(Build.VERSION_CODES.O)
@@ -39,21 +41,26 @@ class MainActivity : ComponentActivity() {
                     NavHost(navController = navController, startDestination = "login") {
                         //login route
                         composable("login") {
-                            LoginScreen(onLoginClick = {
-                                //redirects home after the login
-                                navController.navigate("home") {
-                                    popUpTo("login") { inclusive = true }
+                            LoginScreen(
+                                onLoginClick = {
+                                    //redirects home after the login
+                                    navController.navigate("home") {
+                                        popUpTo("login") { inclusive = true }
+                                    }
+                                },
+                                onDevCaregiverClick = {
+                                    // dev shortcut ONLY for debugging
+                                    navController.navigate("caregiver") {
+                                        popUpTo("login") { inclusive = true }
+                                    }
                                 }
-                            })
+                            )
                         }
                         //home route
                         composable("home") {
                             HomeScreen(navController)
                         }
-                        //caregiver home screen route
-                        composable("caregiver") {
-                            CaregiverHomeScreen()
-                        }
+                        caregiverGraph(navController)
                         //medication details route
                         composable("medicationDetails/{medName}") { backStackEntry ->
                             val medName = backStackEntry.arguments?.getString("medName") ?: ""

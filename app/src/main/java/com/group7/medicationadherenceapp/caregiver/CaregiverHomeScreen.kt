@@ -1,8 +1,11 @@
 package com.group7.medicationadherenceapp.caregiver
 
+import android.content.Intent
+import android.net.Uri
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -18,30 +21,34 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavController
 import com.group7.medicationadherenceapp.R
+import com.group7.medicationadherenceapp.caregiver.model.MedItem
+import com.group7.medicationadherenceapp.navigation.Dest
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
 
-//frame colors
+// frame colors
 private val FrameColor = Color(0xFFE0E0E0)
 private val BorderColor = Color(0xFFBDBDBD)
 
-data class MedItem(
-    val id: Long,
-    val name: String,
-    val time: String,
-    var taken: Boolean = false
-)
-
 @Composable
-fun CaregiverHomeScreen() {
-    //temporary data
+fun CaregiverHomeScreen(nav: NavController) {
+    val context = LocalContext.current
+
+    fun contactDoctor() {
+        // Opens the dialer with number prefilled (no CALL_PHONE permission needed)
+        context.startActivity(Intent(Intent.ACTION_DIAL, Uri.parse("tel:123456789")))
+    }
+
+    // temporary data (keep as-is for now)
     val meds = remember {
         mutableStateListOf(
             MedItem(1, "Medication 1", "08:00"),
@@ -67,6 +74,7 @@ fun CaregiverHomeScreen() {
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(bottom = 6.dp)
+                        .clickable { contactDoctor() }     // ← tap to open dialer
                 ) {
                     Box(
                         Modifier
@@ -81,7 +89,12 @@ fun CaregiverHomeScreen() {
                         )
                     }
                 }
-                BottomBarRect()
+                BottomBarRect(
+                    onHome = { nav.navigate(Dest.HOME) { launchSingleTop = true } },
+                    onHistory = { nav.navigate(Dest.HISTORY) { launchSingleTop = true } },
+                    onProfile = { nav.navigate(Dest.PROFILE) { launchSingleTop = true } },
+                    onSettings = { nav.navigate(Dest.SETTINGS) { launchSingleTop = true } },
+                )
             }
         }
     ) { inner ->
@@ -234,30 +247,37 @@ private fun Frame(
 
 /** Bottom bar */
 @Composable
-private fun BottomBarRect() {
+private fun BottomBarRect(
+    onHome: () -> Unit,
+    onHistory: () -> Unit,
+    onProfile: () -> Unit,
+    onSettings: () -> Unit
+) {
     Row(
         Modifier
             .fillMaxWidth()
             .padding(horizontal = 8.dp),
         horizontalArrangement = Arrangement.SpaceBetween
     ) {
-        BottomSquare(Icons.Filled.Home, "Home")
-        BottomSquare(Icons.Filled.History, "History")
-        BottomSquare(Icons.Filled.Person, "Profile")
-        BottomSquare(Icons.Filled.Settings, "Settings")
+        BottomSquare(Icons.Filled.Home, "Home", onHome)
+        BottomSquare(Icons.Filled.History, "History", onHistory)
+        BottomSquare(Icons.Filled.Person, "Profile", onProfile)
+        BottomSquare(Icons.Filled.Settings, "Settings", onSettings)
     }
 }
 
 @Composable
 private fun BottomSquare(
     icon: androidx.compose.ui.graphics.vector.ImageVector,
-    label: String
+    label: String,
+    onClick: () -> Unit
 ) {
     Box(
         Modifier
             .size(72.dp)
             .border(1.dp, BorderColor, RoundedCornerShape(10.dp))
-            .background(FrameColor, RoundedCornerShape(10.dp)),
+            .background(FrameColor, RoundedCornerShape(10.dp))
+            .clickable { onClick() },  // ← navigate
         contentAlignment = Alignment.Center
     ) {
         Icon(icon, contentDescription = label)
