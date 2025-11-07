@@ -2,6 +2,7 @@ package com.group7.medicationadherenceapp
 
 import android.app.DatePickerDialog
 import android.app.TimePickerDialog
+import android.content.Intent
 import android.os.Build
 import android.os.Bundle
 import androidx.activity.ComponentActivity
@@ -193,7 +194,7 @@ fun HomeScreen(navController: NavController) {
                 ) {
                     BottomBarItem(icon = Icons.Filled.Home, contentDescription = "Home", onClick = { /* Already home */ })
                     BottomBarItem(icon = Icons.Filled.DateRange, contentDescription = "History", onClick = { /* Navigate to History */ })
-                    BottomBarItem(icon = Icons.Filled.Person, contentDescription = "Profile", onClick = { /* Navigate to Profile */ })
+                    BottomBarItem(icon = Icons.Filled.Person, contentDescription = "Profile", onClick = { context.startActivity(Intent(context, ProfileActivity::class.java)) })
                     BottomBarItem(icon = Icons.Filled.Settings, contentDescription = "Settings", onClick = { /* Navigate to Settings */ })
                 }
             }
