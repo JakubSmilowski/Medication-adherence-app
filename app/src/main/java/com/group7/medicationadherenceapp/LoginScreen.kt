@@ -28,17 +28,9 @@ fun LoginScreen(
     var password by remember { mutableStateOf("") }
     var showError by remember { mutableStateOf(false) }
 
-    // Collect the state from ViewModel
-    val allUsers by viewModel.allUsers.collectAsState()
-    val testUser by viewModel.testUser.collectAsState()
-
-    val allMedication by viewModel.allMedication.collectAsState()
-    val testMedication by viewModel.testMedication.collectAsState()
 
     // Load users when screen is first displayed
     LaunchedEffect(Unit) {
-        viewModel.loadAllUsers()
-        viewModel.loadAllMedication()
     }
 
     Column(
@@ -48,67 +40,6 @@ fun LoginScreen(
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center
     ) {
-        // Display test user data
-        if (testUser != null) {
-            Text(
-                text = "Test User in DB:",
-                color = Color.Blue
-            )
-            Text(
-                text = "Name: ${testUser?.firstName} ${testUser?.lastName}",
-                color = Color.Blue
-            )
-            Text(
-                text = "Username: ${testUser?.username}",
-                color = Color.Blue
-            )
-            Text(
-                text = "Total users: ${allUsers.size}",
-                color = Color.Blue
-            )
-            Spacer(modifier = Modifier.height(16.dp))
-        }
-
-        // Test button to insert user
-        Button(onClick = {
-            viewModel.insertTestUser()
-        }) {
-            Text("Insert Test User")
-        }
-
-        Spacer(modifier = Modifier.height(16.dp))
-
-        // Display test user data
-        if (testMedication != null) {
-            Text(
-                text = "Test Medication in DB:",
-                color = Color.Blue
-            )
-            Text(
-                text = "Name: ${testMedication?.name} ${testMedication?.description}",
-                color = Color.Blue
-            )
-            Text(
-                text = "Username: ${testMedication?.dosage}",
-                color = Color.Blue
-            )
-            Text(
-                text = "Total users: ${allMedication.size}",
-                color = Color.Blue
-            )
-            Spacer(modifier = Modifier.height(16.dp))
-        }
-
-        // Test button to insert Medication
-        Button(onClick = {
-            viewModel.insertTestMedication()
-        }) {
-            Text("Insert Test Medication")
-        }
-
-        Spacer(modifier = Modifier.height(16.dp))
-
-
 
         OutlinedTextField(
             value = username,
@@ -132,17 +63,7 @@ fun LoginScreen(
 
         Spacer(modifier = Modifier.height(16.dp))
         Button(onClick = {
-            viewModel.login(
-                username = username,
-                password = password,
-                onSuccess = {
-                    onLoginClick()
-                    showError = false
-                },
-                onError = {
-                    showError = true
-                }
-            )
+            onLoginClick()
         }) {
             Text("Login")
         }

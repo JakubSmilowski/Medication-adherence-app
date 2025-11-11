@@ -1,12 +1,15 @@
 package com.group7.medicationadherenceapp.data.local.database
 
+import android.R
+import android.adservices.adid.AdId
 import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 
 @Entity
 data class Medication(
-    @PrimaryKey val mid: Int,
+    @PrimaryKey(autoGenerate = true) val mid: Int,
+    @ColumnInfo(name = "userId") val userId: Long,
     @ColumnInfo(name = "name") val name: String?,
     @ColumnInfo(name = "description") val description: String?,
     @ColumnInfo(name = "dosage") val dosage: String?,

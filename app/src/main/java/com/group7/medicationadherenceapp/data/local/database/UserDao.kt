@@ -4,6 +4,7 @@ import androidx.room.Dao
 import androidx.room.Delete
 import androidx.room.Insert
 import androidx.room.Query
+import androidx.room.Transaction
 import com.group7.medicationadherenceapp.data.local.database.User
 
 @Dao
@@ -24,6 +25,10 @@ interface UserDao {
     @Delete
     suspend fun delete(user: User)
 
+
     @Query("SELECT * FROM user WHERE username = :username AND password = :password LIMIT 1")
     suspend fun login(username: String, password: String): User?
+
+
+
 }
