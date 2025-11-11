@@ -6,22 +6,17 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
 import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.OutlinedCard
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.group7.medicationadherenceapp.ui.theme.MedicationAdherenceAppTheme
 import androidx.compose.material3.OutlinedButton
 import android.content.pm.ApplicationInfo
@@ -31,12 +26,16 @@ import androidx.compose.ui.platform.LocalContext
 @Composable
 fun LoginScreen(
     onLoginClick: () -> Unit,
+    viewModel: LoginViewModel = viewModel()
     onDevCaregiverClick: (() -> Unit)? = null
 ) {
     var username by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
     var showError by remember { mutableStateOf(false) }
 
+ 
+    LaunchedEffect(Unit) {
+    }
     // ✅ define debuggable flag
     val context = LocalContext.current
     val isDebuggable =
@@ -49,6 +48,7 @@ fun LoginScreen(
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center
     ) {
+
         OutlinedTextField(
             value = username,
             onValueChange = { username = it },
@@ -61,20 +61,17 @@ fun LoginScreen(
             label = { Text("Password") },
         )
         Spacer(modifier = Modifier.height(16.dp))
+
         if (showError) {
             Text(
                 text = "Invalid username or password",
                 color = Color.Red
             )
         }
+
         Spacer(modifier = Modifier.height(16.dp))
         Button(onClick = {
-            if (username == "user1" && password == "password1") {
-                onLoginClick()
-                showError = false
-            } else {
-                showError = true
-            }
+            onLoginClick()
         }) {
             Text("Login")
         }
@@ -89,10 +86,11 @@ fun LoginScreen(
     }
 }
 
-@Preview(showBackground = true)
-@Composable
-fun LoginScreenPreview() {
-    MedicationAdherenceAppTheme {
-        LoginScreen(onLoginClick = {})
+        Spacer(modifier = Modifier.height(32.dp))
+        Button(onClick = {
+            // Handle sign up
+        }) {
+            Text("I don't have an account")
+        }
     }
 }
