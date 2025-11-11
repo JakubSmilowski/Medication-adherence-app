@@ -17,21 +17,29 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.group7.medicationadherenceapp.ui.theme.MedicationAdherenceAppTheme
+import androidx.compose.material3.OutlinedButton
+import android.content.pm.ApplicationInfo
+import androidx.compose.ui.platform.LocalContext
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun LoginScreen(
     onLoginClick: () -> Unit,
     viewModel: LoginViewModel = viewModel()
+    onDevCaregiverClick: (() -> Unit)? = null
 ) {
     var username by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
     var showError by remember { mutableStateOf(false) }
 
-
-    // Load users when screen is first displayed
+ 
     LaunchedEffect(Unit) {
     }
+    // ✅ define debuggable flag
+    val context = LocalContext.current
+    val isDebuggable =
+        (context.applicationInfo.flags and ApplicationInfo.FLAG_DEBUGGABLE) != 0
 
     Column(
         modifier = Modifier
@@ -67,6 +75,16 @@ fun LoginScreen(
         }) {
             Text("Login")
         }
+
+// Dev-only Caregiver shortcut (no BuildConfig needed)
+        if (isDebuggable && onDevCaregiverClick != null) {
+            Spacer(modifier = Modifier.height(16.dp))
+            OutlinedButton(onClick = { onDevCaregiverClick() }) {
+                Text("Dev → Caregiver")
+            }
+        }
+    }
+}
 
         Spacer(modifier = Modifier.height(32.dp))
         Button(onClick = {
