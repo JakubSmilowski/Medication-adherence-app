@@ -32,9 +32,13 @@ fun LoginScreen(
     val allUsers by viewModel.allUsers.collectAsState()
     val testUser by viewModel.testUser.collectAsState()
 
+    val allMedication by viewModel.allMedication.collectAsState()
+    val testMedication by viewModel.testMedication.collectAsState()
+
     // Load users when screen is first displayed
     LaunchedEffect(Unit) {
         viewModel.loadAllUsers()
+        viewModel.loadAllMedication()
     }
 
     Column(
@@ -73,6 +77,38 @@ fun LoginScreen(
         }
 
         Spacer(modifier = Modifier.height(16.dp))
+
+        // Display test user data
+        if (testMedication != null) {
+            Text(
+                text = "Test Medication in DB:",
+                color = Color.Blue
+            )
+            Text(
+                text = "Name: ${testMedication?.name} ${testMedication?.description}",
+                color = Color.Blue
+            )
+            Text(
+                text = "Username: ${testMedication?.dosage}",
+                color = Color.Blue
+            )
+            Text(
+                text = "Total users: ${allMedication.size}",
+                color = Color.Blue
+            )
+            Spacer(modifier = Modifier.height(16.dp))
+        }
+
+        // Test button to insert Medication
+        Button(onClick = {
+            viewModel.insertTestMedication()
+        }) {
+            Text("Insert Test Medication")
+        }
+
+        Spacer(modifier = Modifier.height(16.dp))
+
+
 
         OutlinedTextField(
             value = username,

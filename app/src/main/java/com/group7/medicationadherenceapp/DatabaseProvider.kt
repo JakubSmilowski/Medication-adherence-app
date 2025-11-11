@@ -14,7 +14,10 @@ object DatabaseProvider {
                 context.applicationContext,
                 AppDatabase::class.java,
                 "medication_database"
-            ).build()
+            )
+                //We need to remeber to get rid of this line when we need database data to be persistant in case of migration
+                .fallbackToDestructiveMigration()
+                .build()
             INSTANCE = instance
             instance
         }

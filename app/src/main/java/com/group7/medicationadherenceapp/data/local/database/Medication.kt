@@ -6,7 +6,7 @@ import androidx.room.PrimaryKey
 
 @Entity
 data class Medication(
-    @PrimaryKey val uid: Int,
+    @PrimaryKey val mid: Int,
     @ColumnInfo(name = "name") val name: String?,
     @ColumnInfo(name = "description") val description: String?,
     @ColumnInfo(name = "dosage") val dosage: String?,
@@ -15,5 +15,4 @@ data class Medication(
     @ColumnInfo(name = "end_date") val endDate: String?,
     @ColumnInfo(name = "status") val status: String?,
     @ColumnInfo(name = "created_at") val createdAt: String?,
-
 )
