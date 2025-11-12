@@ -6,10 +6,8 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
 import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.OutlinedCard
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -26,7 +24,7 @@ import com.group7.medicationadherenceapp.ui.theme.MedicationAdherenceAppTheme
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun LoginScreen(onLoginClick: () -> Unit) {
+fun LoginScreen(onLoginClick: (String) -> Unit) {
     var username by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
     var showError by remember { mutableStateOf(false) }
@@ -58,8 +56,8 @@ fun LoginScreen(onLoginClick: () -> Unit) {
         }
         Spacer(modifier = Modifier.height(16.dp))
         Button(onClick = {
-            if (username == "user1" && password == "password1") {
-                onLoginClick()
+            if (username.isNotBlank() && password.isNotBlank()) {
+                onLoginClick(username)
                 showError = false
             } else {
                 showError = true

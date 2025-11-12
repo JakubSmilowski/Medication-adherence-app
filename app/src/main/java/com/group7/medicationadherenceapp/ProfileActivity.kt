@@ -3,10 +3,21 @@ package com.group7.medicationadherenceapp
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
-import androidx.compose.material3.*
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -17,9 +28,10 @@ import com.group7.medicationadherenceapp.ui.theme.MedicationAdherenceAppTheme
 class ProfileActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        val username = intent.getStringExtra("USERNAME") ?: "Patient"
         setContent {
             MedicationAdherenceAppTheme {
-                ProfileScreen(onBackClick = { finish() })
+                ProfileScreen(username = username, onBackClick = { finish() })
             }
         }
     }
@@ -27,7 +39,7 @@ class ProfileActivity : ComponentActivity() {
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun ProfileScreen(onBackClick: () -> Unit) {
+fun ProfileScreen(username: String, onBackClick: () -> Unit) {
     Scaffold(
         topBar = {
             TopAppBar(
@@ -49,25 +61,10 @@ fun ProfileScreen(onBackClick: () -> Unit) {
             verticalArrangement = Arrangement.Top
         ) {
             Spacer(modifier = Modifier.height(2.dp))
-            Text(text = "Caregiver Profile", style = MaterialTheme.typography.headlineLarge)
+            Text(text = "$username's Profile", style = MaterialTheme.typography.headlineLarge)
+
             Spacer(modifier = Modifier.height(16.dp))
-            Text(text = "Tomasz Korweta", style = MaterialTheme.typography.headlineMedium)
-            Spacer(modifier = Modifier.height(8.dp))
-            Text(text = "tomaszkorweta@gmail.com", style = MaterialTheme.typography.bodyLarge)
-            Spacer(modifier = Modifier.height(32.dp))
-            Button(
-                onClick = {},
-                modifier = Modifier.fillMaxWidth()
-            ) {
-                Text("Edit Profile")
-            }
-            Spacer(modifier = Modifier.height(16.dp))
-            OutlinedButton(
-                onClick = {},
-                modifier = Modifier.fillMaxWidth()
-            ) {
-                Text("Logout")
-            }
+            Text(text = username, style = MaterialTheme.typography.headlineMedium)
         }
     }
 }
@@ -76,6 +73,6 @@ fun ProfileScreen(onBackClick: () -> Unit) {
 @Composable
 fun ProfileScreenPreview() {
     MedicationAdherenceAppTheme {
-        ProfileScreen(onBackClick = {})
+        ProfileScreen("Patient", onBackClick = {})
     }
 }
