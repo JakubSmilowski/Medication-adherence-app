@@ -1,5 +1,11 @@
 package com.group7.medicationadherenceapp
-
+/**
+ *
+ *
+ * I am going to refractor this mf one day. I will be back
+ *
+ *
+ * */
 import android.app.DatePickerDialog
 import android.app.TimePickerDialog
 import android.content.Intent
@@ -15,20 +21,24 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.vector.ImageVector
+//import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import com.group7.medicationadherenceapp.caregiver.CaregiverHomeScreen
 import com.group7.medicationadherenceapp.navigation.caregiverGraph
 import com.group7.medicationadherenceapp.ui.theme.MedicationAdherenceAppTheme
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 import java.util.*
+import com.group7.medicationadherenceapp.ui.theme.components.MedicationRow
+import com.group7.medicationadherenceapp.ui.theme.components.BottomBarItem
+import com.group7.medicationadherenceapp.ui.theme.intro.IntroScreen
+
 
 
 class MainActivity : ComponentActivity() {
@@ -39,7 +49,18 @@ class MainActivity : ComponentActivity() {
             MedicationAdherenceAppTheme {
                 Surface(modifier = Modifier.fillMaxSize()) {
                     val navController = rememberNavController()
-                    NavHost(navController = navController, startDestination = "login") {
+                    NavHost(navController = navController, startDestination = "intro") {
+                        //Intro route
+                        composable("intro") {
+                            IntroScreen(
+                                onLoginClick = {
+                                    navController.navigate("login")
+                                },
+                                onRegisterClick = {
+                                    navController.navigate("register")
+                                }
+                            )
+                        }
                         //login route
                         composable("login") {
                             LoginScreen(
@@ -49,12 +70,24 @@ class MainActivity : ComponentActivity() {
                                         popUpTo("login") { inclusive = true }
                                     }
                                 },
+                                onBackClick = { navController.popBackStack() },
                                 onDevCaregiverClick = {
                                     // dev shortcut ONLY for debugging
                                     navController.navigate("caregiver") {
                                         popUpTo("login") { inclusive = true }
                                     }
                                 }
+                            )
+                        }
+                        //register route
+                        composable("register") {
+                            RegistrationScreen(
+                                onRegistrationComplete = {
+                                    navController.navigate("home") {
+                                        popUpTo("register") { inclusive = true }
+                                    }
+                                },
+                                onBackClick = { navController.popBackStack() }
                             )
                         }
                         //home route
@@ -77,61 +110,7 @@ class MainActivity : ComponentActivity() {
     }
 }
 //UI block below
-@Composable
-fun MedicationRow(
-    medicationName: String,
-    onMedicationClick: () -> Unit,
-    onDateClick: () -> Unit,
-    isChecked: Boolean,
-    onCheckedChange: (Boolean) -> Unit
-) {
-    Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(horizontal = 24.dp, vertical = 8.dp),
-        verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.SpaceBetween
-    ) {
-        Button(
-            onClick = onMedicationClick,
-            modifier = Modifier.weight(3f)
-        ) {
-            Text(medicationName)
-        }
 
-        Spacer(modifier = Modifier.width(8.dp))
-
-        IconButton(
-            onClick = onDateClick,
-            modifier = Modifier.size(56.dp)
-        ) {
-            Icon(
-                imageVector = Icons.Filled.DateRange,
-                contentDescription = "Select Date"
-            )
-        }
-
-        Checkbox(
-            checked = isChecked,
-            onCheckedChange = onCheckedChange,
-            modifier = Modifier.padding(start = 8.dp)
-        )
-    }
-}
-
-@Composable
-fun BottomBarItem(
-    icon: ImageVector,
-    contentDescription: String,
-    onClick: () -> Unit
-) {
-    IconButton(onClick = onClick) {
-        Icon(
-            imageVector = icon,
-            contentDescription = contentDescription
-        )
-    }
-}
 
 @RequiresApi(Build.VERSION_CODES.O)
 @OptIn(ExperimentalMaterial3Api::class)
@@ -239,8 +218,11 @@ fun HomeScreen(navController: NavController) {
             )
             MedicationRow(
                 medicationName = "Medication 3",
-                onMedicationClick = { navController.navigate(
-                "medicationDetails/Medication 3") },
+                onMedicationClick = {
+                    navController.navigate(
+                        "medicationDetails/Medication 3"
+                    )
+                },
                 onDateClick = { showDatePicker("Medication 3") },
                 isChecked = isMedication3Taken,
                 onCheckedChange = { isMedication3Taken = it }
