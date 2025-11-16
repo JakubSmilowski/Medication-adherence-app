@@ -5,6 +5,7 @@ import androidx.compose.runtime.Composable
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
+import com.group7.medicationadherenceapp.SettingsScreen
 import com.group7.medicationadherenceapp.caregiver.CaregiverHomeScreen
 import com.group7.medicationadherenceapp.history.HistoryScreen
 
@@ -16,6 +17,6 @@ fun NavGraphBuilder.caregiverGraph(nav: NavController) {
     composable(Dest.CAREGIVER) { CaregiverHomeScreen(nav) }
     // Simple placeholders so bottom bar can navigate:
     composable(Dest.HISTORY) { HistoryScreen(nav) }
-    composable(Dest.PROFILE) { Text("Profile (TODO)") }
-    composable(Dest.SETTINGS) { Text("Settings (TODO)") }
+    composable(Dest.PROFILE) { Text("Profile - to do")  }
+    composable(Dest.SETTINGS) { SettingsScreen(nav) }
 }
