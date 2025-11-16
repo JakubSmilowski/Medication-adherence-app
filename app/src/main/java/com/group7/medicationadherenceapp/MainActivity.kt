@@ -30,7 +30,9 @@ import androidx.navigation.NavController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import com.group7.medicationadherenceapp.navigation.Dest
 import com.group7.medicationadherenceapp.navigation.caregiverGraph
+import com.group7.medicationadherenceapp.navigation.patientGraph
 import com.group7.medicationadherenceapp.ui.theme.MedicationAdherenceAppTheme
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
@@ -64,9 +66,8 @@ class MainActivity : ComponentActivity() {
                         //login route
                         composable("login") {
                             LoginScreen(
-                                onLoginClick = {
-                                    //redirects home after the login
-                                    navController.navigate("home") {
+                                onLoginClick = { role ->
+                                        navController.navigate(role.startDestination) {
                                         popUpTo("login") { inclusive = true }
                                     }
                                 },
@@ -82,18 +83,17 @@ class MainActivity : ComponentActivity() {
                         //register route
                         composable("register") {
                             RegistrationScreen(
-                                onRegistrationComplete = {
-                                    navController.navigate("home") {
+                                onRegistrationComplete = { role ->
+                                    navController.navigate(role.startDestination) {
                                         popUpTo("register") { inclusive = true }
                                     }
                                 },
                                 onBackClick = { navController.popBackStack() }
                             )
                         }
-                        //home route
-                        composable("home") {
-                            HomeScreen(navController)
-                        }
+                        //Patient graph
+                        patientGraph(navController)
+                        //Caregicer graph
                         caregiverGraph(navController)
                         //medication details route
                         composable("medicationDetails/{medName}") { backStackEntry ->
@@ -189,7 +189,8 @@ fun HomeScreen(navController: NavController) {
                 ) {
                     BottomBarItem(icon = Icons.Filled.Home, contentDescription = "Home", onClick = { /* Already home */ })
                     BottomBarItem(icon = Icons.Filled.DateRange, contentDescription = "History", onClick = { /* Navigate to History */ })
-                    BottomBarItem(icon = Icons.Filled.Person, contentDescription = "Profile", onClick = { context.startActivity(Intent(context, ProfileActivity::class.java)) })
+                    // DOBRZE:
+                    BottomBarItem(icon = Icons.Filled.Person, contentDescription = "Profile", onClick = { navController.navigate(Dest.PROFILE) })
                     BottomBarItem(icon = Icons.Filled.Settings, contentDescription = "Settings", onClick = { /* Navigate to Settings */ })
                 }
             }

@@ -43,7 +43,7 @@ import kotlinx.coroutines.launch
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun RegistrationScreen(
-    onRegistrationComplete: () -> Unit,
+    onRegistrationComplete: (role: UserRole) -> Unit,
     onBackClick: () -> Unit,
     viewModel: LoginViewModel = viewModel()
 ) {
@@ -133,7 +133,7 @@ fun RegistrationScreen(
                         isPatient
                     )
                     if (success) {
-                        onRegistrationComplete()
+                        onRegistrationComplete(UserRole.CAREGIVER)
                     } else {
                         showError = true
                     }
