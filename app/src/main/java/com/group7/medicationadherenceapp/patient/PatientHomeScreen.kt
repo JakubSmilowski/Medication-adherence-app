@@ -35,9 +35,13 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
+import androidx.navigation.compose.rememberNavController
+//import com.group7.medicationadherenceapp.patient.PatientHomeScreen
 import com.group7.medicationadherenceapp.navigation.Dest
+import com.group7.medicationadherenceapp.ui.theme.MedicationAdherenceAppTheme
 import com.group7.medicationadherenceapp.ui.theme.components.BottomBarItem
 import com.group7.medicationadherenceapp.ui.theme.components.MedicationRow
 import java.time.LocalDate
@@ -219,6 +223,16 @@ fun PatientHomeScreen(navController: NavController) {
                 Text("Contact Doctor")
             }
         }
+    }
+}
+
+@RequiresApi(Build.VERSION_CODES.O)
+@Preview(showBackground = true)
+@Composable
+fun PatientHomeScreenPreview() {
+    val navController = rememberNavController()
+    MedicationAdherenceAppTheme {
+        PatientHomeScreen(navController)
     }
 }
 

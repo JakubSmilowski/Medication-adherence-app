@@ -1,5 +1,6 @@
 package com.group7.medicationadherenceapp
 
+
 import android.app.Application
 import androidx.lifecycle.AndroidViewModel
 import com.group7.medicationadherenceapp.data.local.database.AppDatabase

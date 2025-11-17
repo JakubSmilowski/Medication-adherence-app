@@ -12,7 +12,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -29,13 +29,13 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
-import androidx.navigation.NavController
 import kotlinx.coroutines.launch
+
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun LoginScreen(
-    onLoginClick: (role: UserRole) -> Unit,
+    onLoginClick: (UserRole) -> Unit,
     onBackClick: () -> Unit,
     viewModel: LoginViewModel = viewModel(),
     onDevCaregiverClick: (() -> Unit)? = null
@@ -55,7 +55,7 @@ fun LoginScreen(
                 title = { Text("Login") },
                 navigationIcon = {
                     IconButton(onClick = onBackClick) {
-                        Icon(Icons.Filled.ArrowBack, contentDescription = "Back")
+                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back")
                     }
                 }
             )
@@ -95,13 +95,8 @@ fun LoginScreen(
                 scope.launch {
                     val user = viewModel.login(username, password)
                     if (user != null) {
-                        //Differenciete patient from caregiver for easier navigation.
-                        // Used enum - UserRole.kt - file
-                        if(user.patient == true){
-                            onLoginClick(UserRole.PATIENT)
-                        }else{
-                            onLoginClick(UserRole.CAREGIVER)
-                        }
+                        val role = if (user.patient == true) UserRole.PATIENT else UserRole.CAREGIVER
+                        onLoginClick(role)
                     } else {
                         showError = true
                     }
@@ -110,7 +105,6 @@ fun LoginScreen(
                 Text("Login")
             }
 
-// Dev-only Caregiver shortcut (no BuildConfig needed)
             if (isDebuggable && onDevCaregiverClick != null) {
                 Spacer(modifier = Modifier.height(16.dp))
                 OutlinedButton(onClick = { onDevCaregiverClick() }) {
