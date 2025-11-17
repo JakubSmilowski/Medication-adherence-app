@@ -22,7 +22,7 @@ fun ProfileScreen(nav: NavController) {
             TopAppBar(
                 title = { Text("Profile") },
                 navigationIcon = {
-                    IconButton(onClick = { nav.popBackStack() }) { // Użyj NavController do powrotu
+                    IconButton(onClick = { nav.popBackStack() }) { 
                         Icon(Icons.Filled.ArrowBack, contentDescription = "Back")
                     }
                 }
