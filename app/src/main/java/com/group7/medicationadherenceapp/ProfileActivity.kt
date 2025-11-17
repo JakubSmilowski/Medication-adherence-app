@@ -12,29 +12,21 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavController
+import androidx.navigation.compose.rememberNavController
 import com.group7.medicationadherenceapp.ui.theme.MedicationAdherenceAppTheme
 
-class ProfileActivity : ComponentActivity() {
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        setContent {
-            MedicationAdherenceAppTheme {
-                ProfileScreen(onBackClick = { finish() })
-            }
-        }
-    }
-}
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun ProfileScreen(onBackClick: () -> Unit) {
+fun ProfileScreen(nav: NavController) {
     Scaffold(
         topBar = {
             TopAppBar(
                 title = { Text("Profile") },
                 navigationIcon = {
-                    IconButton(onClick = onBackClick) {
-                        Icon(Icons.Filled.ArrowBack, contentDescription = "back")
+                    IconButton(onClick = { nav.popBackStack() }) { // Użyj NavController do powrotu
+                        Icon(Icons.Filled.ArrowBack, contentDescription = "Back")
                     }
                 }
             )
@@ -76,6 +68,6 @@ fun ProfileScreen(onBackClick: () -> Unit) {
 @Composable
 fun ProfileScreenPreview() {
     MedicationAdherenceAppTheme {
-        ProfileScreen(onBackClick = {})
+        ProfileScreen(nav = rememberNavController())
     }
 }

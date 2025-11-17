@@ -1,0 +1,25 @@
+package com.group7.medicationadherenceapp
+
+import android.content.Context
+import androidx.room.Room
+import com.group7.medicationadherenceapp.data.local.database.AppDatabase
+
+object DatabaseProvider {
+    @Volatile
+    private var INSTANCE: AppDatabase? = null
+
+    fun getDatabase(context: Context): AppDatabase {
+        return INSTANCE ?: synchronized(this) {
+            val instance = Room.databaseBuilder(
+                context.applicationContext,
+                AppDatabase::class.java,
+                "medication_database"
+            )
+                //We need to remember to get rid of this line when we need database data to be persistant in case of migration
+                .fallbackToDestructiveMigration()
+                .build()
+            INSTANCE = instance
+            instance
+        }
+    }
+}

@@ -90,7 +90,7 @@ fun CaregiverHomeScreen(nav: NavController) {
                     }
                 }
                 BottomBarRect(
-                    onHome = { nav.navigate(Dest.HOME) { launchSingleTop = true } },
+                    onHome = { nav.navigate(Dest.CAREGIVER) { launchSingleTop = true } },
                     onHistory = { nav.navigate(Dest.HISTORY) { launchSingleTop = true } },
                     onProfile = { nav.navigate(Dest.PROFILE) { launchSingleTop = true } },
                     onSettings = { nav.navigate(Dest.SETTINGS) { launchSingleTop = true } },
