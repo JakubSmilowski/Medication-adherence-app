@@ -30,6 +30,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
+import com.group7.medicationadherenceapp.navigation.Dest
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -38,7 +39,8 @@ fun LoginScreen(
     onLoginClick: (role: UserRole) -> Unit,
     onBackClick: () -> Unit,
     viewModel: LoginViewModel = viewModel(),
-    onDevCaregiverClick: (() -> Unit)? = null
+    onDevCaregiverClick: (() -> Unit)? = null,
+    nav: NavController
 ) {
     var username by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
@@ -120,7 +122,7 @@ fun LoginScreen(
 
             Spacer(modifier = Modifier.height(32.dp))
             Button(onClick = {
-
+                nav.navigate("register")
             }) {
                 Text("I don't have an account")
             }

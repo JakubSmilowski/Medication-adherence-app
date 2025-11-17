@@ -77,7 +77,8 @@ class MainActivity : ComponentActivity() {
                                     navController.navigate("caregiver") {
                                         popUpTo("login") { inclusive = true }
                                     }
-                                }
+                                },
+                                nav = navController
                             )
                         }
                         //register route
