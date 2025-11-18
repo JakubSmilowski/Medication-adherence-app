@@ -35,7 +35,7 @@ import kotlinx.coroutines.launch
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun LoginScreen(
-    onLoginClick: (UserRole) -> Unit,
+    onLoginClick: (UserRole, Int) -> Unit,
     onBackClick: () -> Unit,
     viewModel: LoginViewModel = viewModel(),
     onDevCaregiverClick: (() -> Unit)? = null
@@ -95,8 +95,9 @@ fun LoginScreen(
                 scope.launch {
                     val user = viewModel.login(username, password)
                     if (user != null) {
+                        println("DEBUG_USER: Successfully logged in. User ID is: ${user.uid}")
                         val role = if (user.patient == true) UserRole.PATIENT else UserRole.CAREGIVER
-                        onLoginClick(role)
+                        onLoginClick(role, user.uid)
                     } else {
                         showError = true
                     }

@@ -53,7 +53,7 @@ import java.util.Locale
 @RequiresApi(Build.VERSION_CODES.O)
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun PatientHomeScreen(navController: NavController) {
+fun PatientHomeScreen(navController: NavController, userId: Int) {
     var isMedication1Taken by remember { mutableStateOf(false) }
     var isMedication2Taken by remember { mutableStateOf(false) }
     var isMedication3Taken by remember { mutableStateOf(false) }
@@ -126,10 +126,9 @@ fun PatientHomeScreen(navController: NavController) {
                     horizontalArrangement = Arrangement.SpaceAround
                 ) {
                     BottomBarItem(icon = Icons.Filled.Home, contentDescription = "Home", onClick = { /* Already home */ })
-                    BottomBarItem(icon = Icons.Filled.DateRange, contentDescription = "History", onClick = { /* Navigate to History */ })
-                    // DOBRZE:
-                    BottomBarItem(icon = Icons.Filled.Person, contentDescription = "Profile", onClick = { navController.navigate(Dest.PROFILE) })
-                    BottomBarItem(icon = Icons.Filled.Settings, contentDescription = "Settings", onClick = { /* Navigate to Settings */ })
+                    BottomBarItem(icon = Icons.Filled.DateRange, contentDescription = "History", onClick = { navController.navigate("${Dest.HISTORY}/$userId") })
+                    BottomBarItem(icon = Icons.Filled.Person, contentDescription = "Profile", onClick = { navController.navigate("${Dest.PROFILE}/$userId") })
+                    BottomBarItem(icon = Icons.Filled.Settings, contentDescription = "Settings", onClick = { navController.navigate("${Dest.SETTINGS}/$userId") })
                 }
             }
         }
@@ -232,7 +231,6 @@ fun PatientHomeScreen(navController: NavController) {
 fun PatientHomeScreenPreview() {
     val navController = rememberNavController()
     MedicationAdherenceAppTheme {
-        PatientHomeScreen(navController)
+        PatientHomeScreen(navController, 1)
     }
 }
-

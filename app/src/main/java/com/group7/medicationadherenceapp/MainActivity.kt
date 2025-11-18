@@ -39,15 +39,15 @@ class MainActivity : ComponentActivity() {
                         //login route
                         composable("login") {
                             LoginScreen(
-                                onLoginClick = { role ->
-                                    navController.navigate(role.startDestination) {
+                                onLoginClick = { role, userId ->
+                                    val routeWithId = "${role.startDestination}/$userId"
+                                    navController.navigate(routeWithId) {
                                         popUpTo("login") { inclusive = true }
                                     }
                                 },
                                 onBackClick = { navController.popBackStack() },
                                 onDevCaregiverClick = {
-                                    // dev shortcut ONLY for debugging
-                                    navController.navigate("caregiver") {
+                                    navController.navigate("caregiver/1") {
                                         popUpTo("login") { inclusive = true }
                                     }
                                 }
