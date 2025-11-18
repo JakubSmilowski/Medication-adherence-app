@@ -27,9 +27,9 @@ class LoginViewModel(application: Application) : AndroidViewModel(application) {
         email: String,
         password: String,
         isPatient: Boolean
-    ): Boolean {
+    ): User? {
         if (userDao.getUserByUsername(username) != null || userDao.getUserByEmail(email) != null) {
-            return false // The mf already exists
+            return null // The mf already exists
         }
 
         val user = User(
@@ -43,6 +43,6 @@ class LoginViewModel(application: Application) : AndroidViewModel(application) {
             phoneNumber = null // Not collecting this in registration for now cause i dunno
         )
         userDao.insert(user)
-        return true // Mf was successful
+        return userDao.getUserByUsername(username) // Mf was successful
     }
 }

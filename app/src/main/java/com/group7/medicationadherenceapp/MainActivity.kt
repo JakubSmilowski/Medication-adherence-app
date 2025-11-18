@@ -56,8 +56,9 @@ class MainActivity : ComponentActivity() {
                         //register route
                         composable("register") {
                             RegistrationScreen(
-                                onRegistrationComplete = { role ->
-                                    navController.navigate(role.startDestination) {
+                                onRegistrationComplete = { role, userId ->
+                                    val routeWithId = "${role.startDestination}/$userId"
+                                    navController.navigate(routeWithId) {
                                         popUpTo("register") { inclusive = true }
                                     }
                                 },

@@ -18,4 +18,11 @@ class ProfileViewModel(private val db: AppDatabase) : ViewModel() {
             _user.value = db.userDao().getUserById(userId)
         }
     }
+
+    fun updateUser(user: User) {
+        viewModelScope.launch {
+            db.userDao().updateUser(user)
+            _user.value = user
+        }
+    }
 }

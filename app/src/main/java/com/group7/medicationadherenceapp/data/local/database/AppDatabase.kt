@@ -46,6 +46,7 @@ abstract class AppDatabase : RoomDatabase() {
                     "medication_adherence_database" // The db name
                 )
                     .fallbackToDestructiveMigration() //Added for easier development
+                    .allowMainThreadQueries()
                     .build()
 
                 //Assign the newly created instance and then returns it

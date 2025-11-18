@@ -5,6 +5,7 @@ import androidx.room.Delete
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
+import androidx.room.Update
 import com.group7.medicationadherenceapp.data.local.database.User
 
 @Dao
@@ -52,4 +53,7 @@ interface UserDao {
 
     @Query("SELECT * FROM user WHERE uid = :userId")
     suspend fun getUserById(userId: Int): User?
+
+    @Update
+    suspend fun updateUser(user: User)
 }
