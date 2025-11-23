@@ -1,42 +1,21 @@
 package com.group7.medicationadherenceapp
 
-import android.R
-import android.provider.CalendarContract
-import android.view.View
-import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
-import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonColors
-import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.FilledIconButton
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedButton
-import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
-import androidx.compose.material3.TopAppBar
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
+import androidx.compose.material3.*
+import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.layout.VerticalAlignmentLine
-import androidx.compose.ui.modifier.modifierLocalConsumer
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
@@ -50,6 +29,9 @@ fun SettingsScreen(nav: NavController) {
 
     var deleteAccountIsToggled by rememberSaveable { mutableStateOf(false) }
 
+    var areNotificationsMuted by rememberSaveable { mutableStateOf(false) }
+    var notifyCaretaker by rememberSaveable { mutableStateOf(true) }
+    var isDarkMode by rememberSaveable { mutableStateOf(false) }
 
     Scaffold(
         topBar = {
@@ -62,9 +44,7 @@ fun SettingsScreen(nav: NavController) {
                 }
             )
         },
-
-
-        ) { innerPadding ->
+    ) { innerPadding ->
         Column(
             modifier = Modifier
                 .fillMaxSize()
@@ -80,80 +60,116 @@ fun SettingsScreen(nav: NavController) {
                     style = MaterialTheme.typography.headlineMedium,
                     color = MaterialTheme.colorScheme.primary
                 )
-                TextButton (
-                    onClick = { nav.navigate(Dest.PROFILE) }
-                ) {
-                    Text("Profile")
-                }
-
-                Text("Email")
-                Text("Caretaker: ") //Here caretaker will be displaied
-                Text("About")
-                Spacer(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(16.dp)
+                Text(
+                    text = "Profile",
+                    modifier = Modifier.clickable { nav.navigate(Dest.PROFILE) },
+                    style = MaterialTheme.typography.bodyLarge
                 )
+                Row {
+                    Text("Email: ", style = MaterialTheme.typography.bodyLarge)
+                    Text("xxx@gmail.com", style = MaterialTheme.typography.bodyLarge) // Placeholder for actual email
+                }
+                Row {
+                    Text("Caretaker: ", style = MaterialTheme.typography.bodyLarge)
+                    Text("xxxx xxxxx", style = MaterialTheme.typography.bodyLarge) // Placeholder for actual caretaker name
+                }
+                Text("About", style = MaterialTheme.typography.bodyLarge)
+
+                Spacer(modifier = Modifier.height(24.dp))
+
                 Text(
                     text = "Notifications",
                     style = MaterialTheme.typography.headlineMedium,
                     color = MaterialTheme.colorScheme.primary
-                ) // Headder
-                Text("Notifications - mutes all notifications ") // On/off
-                Text("Sound: ")
-                Text("Notify caretaker of medication intake.")
-                Spacer(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(16.dp)
                 )
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Text("Mute all notifications", style = MaterialTheme.typography.bodyLarge)
+                    Switch(
+                        checked = areNotificationsMuted,
+                        onCheckedChange = { areNotificationsMuted = it }
+                    )
+                }
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Text("Sound: ", style = MaterialTheme.typography.bodyLarge)
+                    Text("Default", style = MaterialTheme.typography.bodyLarge) // Placeholder for dropdown
+                }
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Text("Notify caretaker of medication intake", style = MaterialTheme.typography.bodyLarge)
+                    Switch(
+                        checked = notifyCaretaker,
+                        onCheckedChange = { notifyCaretaker = it }
+                    )
+                }
+
+                Spacer(modifier = Modifier.height(24.dp))
+
+
                 Text(
-                    text = "Accessibliyty",
+                    text = "Accessibility",
                     style = MaterialTheme.typography.headlineMedium,
                     color = MaterialTheme.colorScheme.primary
                 )
-                Text("Text size")
-                Text("Dark mode") // button or smth
-                Spacer(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(16.dp)
-                )
-
-
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Text("Text size", style = MaterialTheme.typography.bodyLarge)
+                    Text("Medium", style = MaterialTheme.typography.bodyLarge) // Placeholder for dropdown
+                }
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Text("Dark mode", style = MaterialTheme.typography.bodyLarge)
+                    Switch(
+                        checked = isDarkMode,
+                        onCheckedChange = { isDarkMode = it }
+                    )
+                }
             }
 
+            // BOTTOM BUTTONS
             Column(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalAlignment = Alignment.CenterHorizontally,
-
-                ) {
+                verticalArrangement = Arrangement.spacedBy(8.dp)
+            ) {
                 Button(
                     onClick = {
                         deleteAccountIsToggled = !deleteAccountIsToggled
-
                     },
                     modifier = Modifier.fillMaxWidth(),
                     colors = ButtonDefaults.buttonColors(
                         contentColor = MaterialTheme.colorScheme.onError,
                         containerColor = MaterialTheme.colorScheme.error,
                     )
-
                 ) {
                     Text("Delete account")
                 }
                 OutlinedButton(
                     onClick = { nav.navigate(Dest.LOGIN) },
                     modifier = Modifier.fillMaxWidth(),
-
-                    ) {
+                ) {
                     Text("Log-out")
                 }
             }
         }
     }
 }
-
 
 @Preview(showBackground = true, name = "Settings Screen Preview")
 @Composable
