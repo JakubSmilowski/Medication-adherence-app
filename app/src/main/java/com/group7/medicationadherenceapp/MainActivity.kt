@@ -6,6 +6,7 @@ package com.group7.medicationadherenceapp
  *
  *
  * */
+import androidx.lifecycle.viewmodel.compose.viewModel
 import android.app.DatePickerDialog
 import android.app.TimePickerDialog
 import android.content.Intent
@@ -48,7 +49,15 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
-            MedicationAdherenceAppTheme {
+            val settingsViewModel: SettingsViewModel = viewModel(
+                factory = SettingsViewModelFactory(application)
+            )
+
+            // 2. Zbierz stan isDarkMode z ViewModel
+            val isDarkMode by settingsViewModel.isDarkMode.collectAsState()
+
+
+            MedicationAdherenceAppTheme(darkTheme = isDarkMode) {
                 Surface(modifier = Modifier.fillMaxSize()) {
                     val navController = rememberNavController()
                     NavHost(navController = navController, startDestination = "intro") {
