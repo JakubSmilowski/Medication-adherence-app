@@ -122,10 +122,9 @@ fun PatientHomeScreen(navController: NavController) {
                     horizontalArrangement = Arrangement.SpaceAround
                 ) {
                     BottomBarItem(icon = Icons.Filled.Home, contentDescription = "Home", onClick = { /* Already home */ })
-                    BottomBarItem(icon = Icons.Filled.DateRange, contentDescription = "History", onClick = { /* Navigate to History */ })
-                    // DOBRZE:
+                    BottomBarItem(icon = Icons.Filled.DateRange, contentDescription = "History", onClick = { navController.navigate(Dest.HISTORY)})
                     BottomBarItem(icon = Icons.Filled.Person, contentDescription = "Profile", onClick = { navController.navigate(Dest.PROFILE) })
-                    BottomBarItem(icon = Icons.Filled.Settings, contentDescription = "Settings", onClick = { /* Navigate to Settings */ })
+                    BottomBarItem(icon = Icons.Filled.Settings, contentDescription = "Settings", onClick = { navController.navigate(Dest.SETTINGS) })
                 }
             }
         }

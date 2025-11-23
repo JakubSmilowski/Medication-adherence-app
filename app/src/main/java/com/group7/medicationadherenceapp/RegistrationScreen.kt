@@ -38,6 +38,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.NavController
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -45,7 +46,7 @@ import kotlinx.coroutines.launch
 fun RegistrationScreen(
     onRegistrationComplete: (role: UserRole) -> Unit,
     onBackClick: () -> Unit,
-    viewModel: LoginViewModel = viewModel()
+    viewModel: LoginViewModel = viewModel(),
 ) {
     var username by remember { mutableStateOf("") }
     var firstName by remember { mutableStateOf("") }

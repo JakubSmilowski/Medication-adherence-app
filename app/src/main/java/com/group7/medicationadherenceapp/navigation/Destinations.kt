@@ -5,6 +5,8 @@ object Dest {
     const val LOGIN = "login"
     const val HOME = "home"
 
+    const val REGISTER = "register"
+
     // caregiver feature routes (bottom bar + screen)
     const val CAREGIVER = "caregiver"
     const val HISTORY = "history"

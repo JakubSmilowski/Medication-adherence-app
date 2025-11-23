@@ -1,8 +1,5 @@
 package com.group7.medicationadherenceapp
 
-import android.os.Bundle
-import androidx.activity.ComponentActivity
-import androidx.activity.compose.setContent
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
@@ -25,7 +22,7 @@ fun ProfileScreen(nav: NavController) {
             TopAppBar(
                 title = { Text("Profile") },
                 navigationIcon = {
-                    IconButton(onClick = { nav.popBackStack() }) { // Użyj NavController do powrotu
+                    IconButton(onClick = { nav.popBackStack() }) { 
                         Icon(Icons.Filled.ArrowBack, contentDescription = "Back")
                     }
                 }
