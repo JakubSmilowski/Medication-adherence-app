@@ -42,20 +42,34 @@ import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
+// Marks this function as a UI component that can be used to build the screen.
 fun RegistrationScreen(
+    // A lambda function passed from the navigation graph. It's called when registration is successful.
+    // It passes the role of the new user so the app can navigate to the correct screen.
     onRegistrationComplete: (role: UserRole) -> Unit,
+    // A lambda function to handle the back button click in the TopAppBar.
     onBackClick: () -> Unit,
+    // Gets an instance of the LoginViewModel. The `viewModel()` helper handles creating it
+    // and ensuring it survives screen rotations and other configuration changes.
     viewModel: LoginViewModel = viewModel()
 ) {
+    // `remember` and `mutableStateOf` create state variables that Compose will track.
+    // When any of these variables change (e.g., the user types in a text field),
+    // Compose will automatically update (recompose) the parts of the UI that use them.
+
     var username by remember { mutableStateOf("") }
     var firstName by remember { mutableStateOf("") }
     var lastName by remember { mutableStateOf("") }
     var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
     var isPatient by remember { mutableStateOf(true) }
-    var showError by remember { mutableStateOf(false) }
+    var showError by remember { mutableStateOf(false) }// State to control the visibility of the error message.
+
+    // `rememberCoroutineScope` gets a coroutine scope that is tied to this composable's lifecycle.
+    // It's used to launch long-running tasks (like a database write) without blocking the UI thread.
     val scope = rememberCoroutineScope()
 
+    // `Scaffold` provides the basic layout structure for the screen (e.g., top bar, main content area).
     Scaffold(
         topBar = {
             TopAppBar(

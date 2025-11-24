@@ -43,23 +43,37 @@ import com.group7.medicationadherenceapp.ui.theme.intro.IntroScreen
 
 
 
+// MainActivity is the main entry point for the application when the user launches it.
 class MainActivity : ComponentActivity() {
+    // `@RequiresApi` is needed because this code uses `java.time` classes (like LocalDate),
+    // which are only fully available on Android Oreo (API 26) and newer.
     @RequiresApi(Build.VERSION_CODES.O)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        // `setContent` is where you define your app's UI using Jetpack Compose.
         setContent {
+            // Applies the app's custom theme (colors, fonts) to all the UI inside it.
             MedicationAdherenceAppTheme {
+                // A surface is a basic container from Material Design, often used as the root.
                 Surface(modifier = Modifier.fillMaxSize()) {
+                    // `rememberNavController()` creates and remembers the navigation controller.
+                    // This controller manages the app's screen stack and navigation actions.
                     val navController = rememberNavController()
+
+                    // `NavHost` is the central component that displays the correct screen (composable)
+                    // based on the current route. It acts like a "stage" for your screens.
                     NavHost(navController = navController, startDestination = "intro") {
-                        //Intro route
+                        // `composable("intro")` defines a destination in the navigation graph.
+                        // When `navController.navigate("intro")` is called, the UI inside this block is shown.
                         composable("intro") {
+                            // Display the introductory screen.
                             IntroScreen(
+                                // Pass lambdas to handle button clicks.
                                 onLoginClick = {
-                                    navController.navigate("login")
+                                    navController.navigate("login") // Go to the login screen.
                                 },
                                 onRegisterClick = {
-                                    navController.navigate("register")
+                                    navController.navigate("register") // Go to the registration screen.
                                 }
                             )
                         }
@@ -67,7 +81,10 @@ class MainActivity : ComponentActivity() {
                         composable("login") {
                             LoginScreen(
                                 onLoginClick = { role ->
-                                        navController.navigate(role.startDestination) {
+                                    // After a successful login, navigate to the user's specific start destination.
+                                    navController.navigate(role.startDestination) {
+                                        // `popUpTo("login")` removes the login screen from the back stack,
+                                        // so the user can't go back to it by pressing the back button.
                                         popUpTo("login") { inclusive = true }
                                     }
                                 },
@@ -84,6 +101,8 @@ class MainActivity : ComponentActivity() {
                         composable("register") {
                             RegistrationScreen(
                                 onRegistrationComplete = { role ->
+
+                                    // Similar to login, navigate to the correct start page after registration.
                                     navController.navigate(role.startDestination) {
                                         popUpTo("register") { inclusive = true }
                                     }
@@ -92,10 +111,15 @@ class MainActivity : ComponentActivity() {
                             )
                         }
                         //Patient graph
+                        // `patientGraph` and `caregiverGraph` are nested navigation graphs.
+                        // They are defined in separate files to keep the main NavHost clean.
+                        // This is a great way to organize complex navigation flows.
                         patientGraph(navController)
-                        //Caregicer graph
+                        //Caregiver graph
                         caregiverGraph(navController)
                         //medication details route
+                        // Defines the destination for the medication detail screen.
+                        // The `{medName}` part is a placeholder for an argument.
                         composable("medicationDetails/{medName}") { backStackEntry ->
                             val medName = backStackEntry.arguments?.getString("medName") ?: ""
                             MedicationDetailScreen(
@@ -289,6 +313,11 @@ fun HomeScreen(navController: NavController) {
 }
 
 
+
+/**
+ * A preview composable for displaying the HomeScreen in the Android Studio design pane.
+ * This allows for rapid UI development without needing to run the app on an emulator.
+ */
 
 @RequiresApi(Build.VERSION_CODES.O)
 @Preview(showBackground = true)
